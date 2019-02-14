@@ -1,5 +1,7 @@
 // This script contains all code necessary to access the api
 
+
+var host = "https://127.0.0.1:5001"
   
 // Execute the given function at a later time (e.g. at a callback).
 // Usage: g = delay(f, 1, 2, 3); ... more code or a callback ... ; g() 
@@ -13,7 +15,7 @@ function searchStation(query, callback){
     if(query.length < 1){
         return;
     }
-    $.getJSON("./LocationsByName?name="+query,callback);
+    $.getJSON(host+"/LocationsByName?name="+query,callback);
 }
 
 
@@ -21,7 +23,7 @@ function searchStation(query, callback){
 
 function lookupJourney(fromId,  toId, departureTimeUTC, transferTime, callback, failCallback){
       
-    let query = "./journey?from="+encodeURIComponent(fromId)+
+    let query = host+"/journey?from="+encodeURIComponent(fromId)+
                     "&to="+encodeURIComponent(toId)+
                     "&departure="+encodeURIComponent(departureTimeUTC)+
                     "&internalTransferTime="+transferTime;
