@@ -47,9 +47,8 @@ body {
     width: 39%;
     background-color: #2cd4dc;
     height: 100%;
-    margin-left: 1%
+    margin-left: 1%;
     min-width: 250px;
-
 }
 
 .map{
@@ -170,5 +169,3 @@ body {
   background-color: DodgerBlue !important;
   color: #ffffff;
 }
-
-

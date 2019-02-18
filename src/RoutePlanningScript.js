@@ -1,7 +1,9 @@
 // This script contains all code necessary to access the api
 
 
-var host = "https://127.0.0.1:5001"
+var host = "https://api.anyways.eu/transit"
+//var host = "http://routing1.anyways.eu:5001";
+//var host = "https://genk.anyways.eu/transit"
   
 // Execute the given function at a later time (e.g. at a callback).
 // Usage: g = delay(f, 1, 2, 3); ... more code or a callback ... ; g() 
