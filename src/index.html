@@ -92,7 +92,7 @@
 
 
                 <div class="row">
-                    <!-- <<div class="col-sm-9">
+                    <div class="col-sm-9">
                         <div class="accordion">
                             <div class="card">
                                 <div class="card-header" id="headingOne">
@@ -108,7 +108,7 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-lg-9">
-                                                <div class="card-title">08:28 - Brussel-Central</div>
+                                                <div class="card-title">08:28 - <a href="./stops.html#http://irail.be/stations/NMBS/008813003">Brussel-Central</a></div>
                                                 <div class="card-subtitle mb-2 text-muted"><i class="fa fa-train"></i>
                                                     Brux.-Midi/Brus.-Zuid – IC3330</div>
                                             </div>
@@ -122,7 +122,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div> -->
+                    </div>
                     <div class="col-sm-12">
                         <div class="accordion" id="journeys">
                         </div>
@@ -310,20 +310,22 @@
 
                 var segmentDepartureTime = dateHHMM(segment.departure.time);
                 var segmentDepartureStop = segment.departure.location.name;
+                var segmentDepartureStopId = segment.departure.location.id;
                 var segmentArrivalTime = dateHHMM(segment.arrival.time);
                 var segmentArrivalStop = segment.arrival.location.name;
+                var segmentArrivalStopId = segment.arrival.location.id;
                 var segmentVehicle = segment.vehicle.substring(segment.vehicle.lastIndexOf("/") + 1);
                 var segmentCardBody = 
                     "<div class=\"row\">\r\n " +
                         "<div class=\"col-lg-9\">\r\n " +
-                            "<div class=\"card-title\">" + segmentDepartureTime +  " - " + segmentDepartureStop + "<\/div>\r\n " +
+                            "<div class=\"card-title\">" + segmentDepartureTime +  " - <a href=\".\/stops.html#" + segmentDepartureStopId +"\">" + segmentDepartureStop + "<\/a><\/div>\r\n " +
                             "<div class=\"card-subtitle mb-2 text-muted\"><i class=\"fa fa-train\"><\/i>\r\n  " +
                             "" + segment.headsign + " \u2013 " + segmentVehicle + "<\/div>\r\n " +
                         "<\/div>\r\n " +
                     "<\/div>\r\n" + 
                     "<div class=\"row\">\r\n " +
                         "<div class=\"col-lg-9\">\r\n " +
-                            "<div class=\"card-title\">" + segmentArrivalTime +  " - " + segmentArrivalStop + "<\/div>\r\n " +
+                            "<div class=\"card-title\">" + segmentArrivalTime +  " - <a href=\".\/stops.html#" + segmentArrivalStopId +"\">" + segmentArrivalStop + "<\/a><\/div>\r\n " +
                         "<\/div>\r\n " +
                     "<\/div>\r\n";;
 
