@@ -1,7 +1,15 @@
 .header-bar {
-    background-color: #2cd4dc;
+    background-color: #000000;
+    color: #FFF
 }
 
+.navbar-light .navbar-nav .nav-link {
+    color: #FFFFFF
+}
+
+.logo {
+    width: 40px;
+}
 
 /************ AUTOCOMPLETE STUFF ***********/
 .autocomplete {

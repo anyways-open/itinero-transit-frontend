@@ -16,8 +16,8 @@
 </head>
 
 <body>
-    <nav class="header-bar navbar navbar-expand-lg navbar-light">
-        <a class="navbar-brand" href="#"><img src="img/OpenPlannerTeamLogo-White.svg" class="logo" /></a>
+    <nav class="header-bar navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="#"><img src="img/logo.png" class="logo" /></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -60,9 +60,9 @@
                 <div class="row">
 
                     <div class="form-group col-sm-3">
-                        <label class="mr-sm-2 sr-only" for="inlineFormCustomSelect"></label>
+                        <label class="mr-sm-2 sr-only" for="leaveOrArrive"></label>
                         <div class="input-group mb-2 mr-sm-2">
-                            <select class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+                            <select class="custom-select mr-sm-2" id="leaveOrArrive">
                                 <option selected">Leave</option>
                                 <option value="1">Arrive</option>
                             </select>
@@ -89,7 +89,7 @@
 
 
                 <div class="row">
-                    <!-- <div class="col-sm-9">
+                    <!-- <<div class="col-sm-9">
                         <div class="accordion">
                             <div class="card">
                                 <div class="card-header" id="headingOne">
@@ -104,21 +104,15 @@
                                     data-parent="#accordionExample">
                                     <div class="card-body">
                                         <div class="row">
-                                            <div class="col-sm-3">
-                                                <div class="card-title">08:28</div>
-                                            </div>
                                             <div class="col-lg-9">
-                                                <div class="card-title">Brussel-Central</div>
+                                                <div class="card-title">08:28 - Brussel-Central</div>
                                                 <div class="card-subtitle mb-2 text-muted"><i class="fa fa-train"></i>
                                                     Brux.-Midi/Brus.-Zuid – IC3330</div>
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-sm-3">
-                                                <div class="card-title">09:22</div>
-                                            </div>
                                             <div class="col-sm-9">
-                                                <div class="card-title">Antwerp-Central</div>
+                                                <div class="card-title">09:22 - Antwerp-Central</div>
                                             </div>
                                         </div>
                                     </div>
@@ -215,6 +209,15 @@
                 return;
             }
 
+            let leave = document.getElementById("leaveOrArrive");
+            if (leave) {
+                if (leave.value === "Leave") {
+                    leave = true;
+                } else {
+                    leave = false;
+                }
+            }
+
             if (fromId === undefined || toId === undefined) {
                 alert("Please, specify a departure and arrival station. No valid station was found.");
                 return;
@@ -223,14 +226,20 @@
             let depTime = document.getElementById('datetimepicker1-value').value;
             let date = new Date(depTime).toISOString();
 
-            lookupJourney(fromId.id, toId.id, date, 180, renderJourneys, onFail);
+            lookupJourney(fromId.id, toId.id, date, leave, 180, renderJourneys, onFail);
         }
 
-        function lookupJourney(fromId, toId, departureTimeUTC, transferTime, callback, failCallback) {
+        function lookupJourney(fromId, toId, departureTimeUTC, leave, transferTime, callback, failCallback) {
             let query = host + "/journey?from=" + encodeURIComponent(fromId) +
                 "&to=" + encodeURIComponent(toId) +
-                "&departure=" + encodeURIComponent(departureTimeUTC) +
+                "&arrival=" + encodeURIComponent(departureTimeUTC) +
                 "&internalTransferTime=" + transferTime;
+            if (leave) {
+                query = host + "/journey?from=" + encodeURIComponent(fromId) +
+                    "&to=" + encodeURIComponent(toId) +
+                    "&departure=" + encodeURIComponent(departureTimeUTC) +
+                    "&internalTransferTime=" + transferTime;
+            }
             $.getJSON(query, callback)
                 .fail(failCallback);
         }
@@ -277,21 +286,15 @@
                 var segmentVehicle = segment.vehicle.substring(segment.vehicle.lastIndexOf("/") + 1);
                 var segmentCardBody = 
                     "<div class=\"row\">\r\n " +
-                        "<div class=\"col-sm-3\">\r\n " +
-                            "<div class=\"card-title\">" + segmentDepartureTime +  "<\/div>\r\n " +
-                        "<\/div>\r\n " +
                         "<div class=\"col-lg-9\">\r\n " +
-                            "<div class=\"card-title\">" + segmentDepartureStop + "<\/div>\r\n " +
+                            "<div class=\"card-title\">" + segmentDepartureTime +  " - " + segmentDepartureStop + "<\/div>\r\n " +
                             "<div class=\"card-subtitle mb-2 text-muted\"><i class=\"fa fa-train\"><\/i>\r\n  " +
                             "" + segment.headsign + " \u2013 " + segmentVehicle + "<\/div>\r\n " +
                         "<\/div>\r\n " +
                     "<\/div>\r\n" + 
                     "<div class=\"row\">\r\n " +
-                        "<div class=\"col-sm-3\">\r\n " +
-                            "<div class=\"card-title\">" + segmentArrivalTime +  "<\/div>\r\n " +
-                        "<\/div>\r\n " +
                         "<div class=\"col-lg-9\">\r\n " +
-                            "<div class=\"card-title\">" + segmentArrivalStop + "<\/div>\r\n " +
+                            "<div class=\"card-title\">" + segmentArrivalTime +  " - " + segmentArrivalStop + "<\/div>\r\n " +
                         "<\/div>\r\n " +
                     "<\/div>\r\n";;
 
@@ -353,6 +356,10 @@
         }
 
         function onFail() {
+            var journeyEl = document.getElementById("journeys");
+            while (journeyEl.firstChild) {
+                journeyEl.removeChild(journeyEl.firstChild);
+            }
             alert("Looking up the journey failed. Perhaps you tried searching a lot in the past of the future?")
         }
     </script>
