@@ -38,7 +38,7 @@
         <div class="row justify-content-md-center">
             <div class="col-lg-11  py-3 px-lg-5">
                 <div class="row">
-                    <div class="form-group col-sm-4">
+                    <div class="form-group col-sm-6">
                         <label class="sr-only" for="from">From</label>
                         <div class="input-group mb-2 mr-sm-2">
                             <div class="input-group-prepend">
@@ -50,7 +50,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group col-sm-4">
+                    <div class="form-group col-sm-6">
                         <label class="sr-only" for="to">To</label>
                         <div class="input-group mb-2 mr-sm-2">
                             <div class="input-group-prepend">
@@ -399,6 +399,18 @@
             }
             alert("Looking up the journey failed. Perhaps you tried searching a lot in the past of the future?")
         }
+
+        $( "#leaveOrArrive" ).change(function() {
+            let fromField = document.getElementById("from");
+            let fromId = fromField.hiddenValue;
+
+            let toField = document.getElementById("to");
+            let toId = toField.hiddenValue;
+
+            if (toId && fromId) {
+                loadJourneys();
+            }
+        });
     </script>
 </body>
 
