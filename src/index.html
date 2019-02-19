@@ -254,6 +254,11 @@
         }
 
         function lookupJourney(fromId, toId, departureTimeUTC, leave, transferTime, callback, failCallback) {
+            var journeyEl = document.getElementById("journeys");
+            while (journeyEl.firstChild) {
+                journeyEl.removeChild(journeyEl.firstChild);
+            }
+            
             let query = host + "/journey?from=" + encodeURIComponent(fromId) +
                 "&to=" + encodeURIComponent(toId) +
                 "&arrival=" + encodeURIComponent(departureTimeUTC) +
