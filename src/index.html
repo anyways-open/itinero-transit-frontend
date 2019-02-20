@@ -215,7 +215,7 @@
                 // the user only typed, but did not use the autocomplete or tab
                 // We search the station and make a guess
                 searchStation(fromField.value, function (data) {
-                    fromField.value = data[0].name;
+                    fromField.value = data[0].location.name;
                     fromField.hiddenValue = data[0].location;
                     loadJourneys();
                 });
@@ -227,9 +227,8 @@
                 // the user only typed, but did not use the autocomplete or tab
                 // We search the station and make a guess
                 searchStation(toField.value, function (data) {
-                    toField.value = data[0].name;
+                    toField.value = data[0].location.name;
                     toField.hiddenValue = data[0].location;
-                    rerenderStartEnd();
                     loadJourneys();
                 });
 
