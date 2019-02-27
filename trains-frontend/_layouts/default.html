@@ -11,11 +11,14 @@
 </head>
 
 <body>
-    {% include header.html %}
+    
+    {% assign header= "header-" | append: lang | append: ".html" %}
+    {% include {{ header }} %}
 
     {{ content }}
     
-    {% include footer.html %}
+    {% assign footer= "footer-" | append: lang | append: ".html" %}
+    {% include {{ footer }} %}
 </body>
 
 </html>

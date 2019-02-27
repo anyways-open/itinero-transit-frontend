@@ -1,0 +1,408 @@
+---
+title: ANYWAYS | NMBS routeplanner
+layout: default
+lang: nl
+order: 1
+---
+
+<div class="container-fluid">
+    <div class="row justify-content-md-center">
+        <div class="col-lg-11  py-3 px-lg-5">
+            <div class="row">
+                <div class="form-group col-sm-6">
+                    <label class="sr-only translate-this" for="from">Van</label>
+                    <div class="input-group mb-2 mr-sm-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text translate-this">Van</div>
+                        </div>
+                        <input type="text" class="form-control" id="from" placeholder="...">
+                        <div class="input-group-append">
+                            <button type="submit" onclick="reverseJourneys()" class="btn btn-primary btn-block"><i
+                                    class="fa fa-exchange"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group col-sm-6">
+                    <label class="sr-only" for="to">Naar</label>
+                    <div class="input-group mb-2 mr-sm-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text translate-this">Naar</div>
+                        </div>
+                        <input type="text" class="form-control" id="to" placeholder="...">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+
+                <div class="form-group col-sm-3">
+                    <label class="mr-sm-2 sr-only" for="leaveOrArrive"></label>
+                    <div class="input-group mb-2 mr-sm-2">
+                        <select class="custom-select mr-sm-2" id="leaveOrArrive">
+                            <option class="translate-this" value="leave" selected>Vertrek</option>
+                            <option class="translate-this" value="arrive">Aankomst</option>
+                        </select>
+                        <div class="input-group-append">
+                            <div class="input-group-text">@</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group col-sm-6">
+                    <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                        <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker1"
+                            id="datetimepicker1-value" />
+                        <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group col-sm-3">
+                    <button type="submit" onclick="loadJourneys()" class="btn btn-primary btn-block translate-this">Plan
+                        Route</button>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- <div class="col-sm-9">
+                        <div class="accordion">
+                            <div class="card">
+                                <div class="card-header" id="headingOne">
+                                    <button class="btn" type="button" data-toggle="collapse" data-target="#collapseOne"
+                                        aria-expanded="true" aria-controls="collapseOne">
+                                        <div class="card-title">08:25 > 09:22 <span class="text-muted">16 min</span>
+                                        </div>
+
+                                    </button>
+                                </div>
+                                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                                    data-parent="#accordionExample">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-lg-9">
+                                                <div class="card-title">08:28 - <a href="./stops.html#http://irail.be/stations/NMBS/008813003">Brussel-Central</a></div>
+                                                <div class="card-subtitle mb-2 text-muted"><i class="fa fa-train"></i>
+                                                    Brux.-Midi/Brus.-Zuid – IC3330</div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-9">
+                                                <div class="card-title">09:22 - Antwerp-Central</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+                <div class="col-sm-12">
+                    <div class="accordion" id="journeys">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+<script src="assets/js/moment-with-locales.js"></script>
+<script type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/js/tempusdominus-bootstrap-4.min.js"></script>
+<link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
+<script type="text/javascript">
+    $(function () {
+        $('#datetimepicker1').datetimepicker({
+            defaultDate: Date.now()
+        });
+    });
+</script>
+<script src="assets/js/autocomplete.js"></script>
+<script>
+    var host = "https://api.anyways.eu/transit";
+
+    function searchStation(query, callback) {
+        if (query.length < 1) {
+            return;
+        }
+
+        $.getJSON(host + "/LocationsByName?name=" + query, callback);
+    }
+
+    function suggestStations(val, callback) {
+        searchStation(val, function (data) {
+            var arr = [];
+            var tags = [];
+            for (let i in data) {
+                arr.push(data[i].location.name);
+                tags.push(data[i].location);
+            }
+            callback(arr, tags);
+        });
+    }
+
+    autocomplete(document.getElementById("from"), suggestStations);
+    autocomplete(document.getElementById("to"), suggestStations);
+
+    function reverseJourneys() {
+        let fromField = document.getElementById("from");
+        let fromId = fromField.hiddenValue;
+
+        let toField = document.getElementById("to");
+        let toId = toField.hiddenValue;
+
+        var tempValue = fromField.value;
+        var tempHV = fromField.hiddenValue;
+
+        fromField.value = toField.value;
+        fromField.hiddenValue = toField.hiddenValue;
+
+        toField.value = tempValue;
+        toField.hiddenValue = tempHV;
+
+        if (fromId && toId) {
+            loadJourneys();
+        }
+    }
+
+    function loadJourneys() {
+        let fromField = document.getElementById("from");
+        let fromId = fromField.hiddenValue;
+
+        let toField = document.getElementById("to");
+        let toId = toField.hiddenValue;
+
+        if (fromId === undefined && fromField.value.length > 0) {
+            // the user only typed, but did not use the autocomplete or tab
+            // We search the station and make a guess
+            searchStation(fromField.value, function (data) {
+                fromField.value = data[0].location.name;
+                fromField.hiddenValue = data[0].location;
+                loadJourneys();
+            });
+
+            return;
+        }
+
+        if (toId === undefined && toField.value.length > 0) {
+            // the user only typed, but did not use the autocomplete or tab
+            // We search the station and make a guess
+            searchStation(toField.value, function (data) {
+                toField.value = data[0].location.name;
+                toField.hiddenValue = data[0].location;
+                loadJourneys();
+            });
+
+            return;
+        }
+
+        let leave = document.getElementById("leaveOrArrive");
+        if (leave) {
+            if (leave.value === "leave") {
+                leave = true;
+            } else {
+                leave = false;
+            }
+        }
+
+        if (fromId === undefined || toId === undefined) {
+            alert("Please, specify a departure and arrival station. No valid station was found.");
+            return;
+        }
+
+        let depTime = document.getElementById('datetimepicker1-value').value;
+        let date = new Date(depTime).toISOString();
+
+        lookupJourney(fromId.id, toId.id, date, leave, 180, renderJourneys, onFail);
+    }
+
+    function lookupJourney(fromId, toId, departureTimeUTC, leave, transferTime, callback, failCallback) {
+        var journeyEl = document.getElementById("journeys");
+        while (journeyEl.firstChild) {
+            journeyEl.removeChild(journeyEl.firstChild);
+        }
+
+        let query = host + "/journey?from=" + encodeURIComponent(fromId) +
+            "&to=" + encodeURIComponent(toId) +
+            "&arrival=" + encodeURIComponent(departureTimeUTC) +
+            "&internalTransferTime=" + transferTime;
+        if (leave) {
+            query = host + "/journey?from=" + encodeURIComponent(fromId) +
+                "&to=" + encodeURIComponent(toId) +
+                "&departure=" + encodeURIComponent(departureTimeUTC) +
+                "&internalTransferTime=" + transferTime;
+        }
+        $.getJSON(query, callback)
+            .fail(failCallback);
+    }
+
+    function htmlToElement(html) {
+        let template = document.createElement('template');
+        html = html.trim(); // Never return a text node of whitespace as the result
+        template.innerHTML = html;
+        return template.content.firstChild;
+    }
+
+    function dateHHMM(date) {
+        return new Date(date).toTimeString().split(' ')[0].substring(0, 5);
+    }
+
+    function renderJourney(journey, first) {
+        let depTime = dateHHMM(journey.departure.time);
+        let arrTime = dateHHMM(journey.arrival.time);
+        let totalMinutes = Math.floor(journey.travelTime / 60);
+        let minutes = (totalMinutes % 60);
+        if (minutes < 10) {
+            minutes = "0" + minutes;
+        }
+        let totalTime = (Math.floor(totalMinutes / 60)) + ":" + minutes;
+        let trainTo = journey.segments[0].headsign;
+        let transfers = journey.transfers == 0 ? "" : "" + journey.transfers;
+
+        // generate a random heading id.
+        let r = Math.random().toString(36).substring(7);
+        var headingId = "heading-" + r;
+        var dataParent = "data-parent-" + r;
+        var dataTarget = "collapse-one-" + r;
+
+        //let headerText = "<div class=journey-header><strong>" + depTime + " > " + arrTime + "</strong>  <span class='weak'>(" + totalTime + " total time)</span> <br /> <span class='weak'>Train to</span> <strong>" + trainTo + "</strong> " + transfers + "</div>"
+
+        var segments = "";
+        var hasDelay = false;
+        for (var i in journey.segments) {
+            var segment = journey.segments[i];
+
+            var segmentDepartureTime = dateHHMM(segment.departure.time);
+            var segmentDepartureDelay = segment.departure.delay;
+            var segmentDepartureStop = segment.departure.location.name;
+            var segmentDepartureStopId = segment.departure.location.id;
+            var segmentArrivalTime = dateHHMM(segment.arrival.time);
+            var segmentArrivalDelay = segment.arrival.delay;
+            var segmentArrivalStop = segment.arrival.location.name;
+            var segmentArrivalStopId = segment.arrival.location.id;
+            var segmentVehicle = segment.vehicle.substring(segment.vehicle.lastIndexOf("/") + 1);
+
+            var departureDelayNotification = "";
+            if (segmentDepartureDelay > 0) {
+                segmentDepartureDelay = segmentDepartureDelay / 60;
+                hasDelay = true;
+                departureDelayNotification = "<span class=\"delay\">" + "+" + segmentDepartureDelay + "<\/span>";
+            }
+
+            var arrivalDelayNotification = "";
+            if (segmentArrivalDelay > 0) {
+                segmentArrivalDelay = segmentArrivalDelay / 60;
+                hasDelay = true;
+                arrivalDelayNotification = "<span class=\"delay\">" + "+" + segmentArrivalDelay + "<\/span>";
+            }
+
+            var segmentCardBody =
+                "<div class=\"row\">\r\n " +
+                "<div class=\"col-lg-9\">\r\n " +
+                "<div class=\"card-title\">" + segmentDepartureTime + " - <a href=\".\/stops-nl.html#" + segmentDepartureStopId + "\">" + segmentDepartureStop + "<\/a> " + departureDelayNotification + " <\/div>\r\n " +
+                "<div class=\"card-subtitle mb-2 text-muted\"><i class=\"fa fa-train\"><\/i>\r\n  " +
+                "" + segment.headsign + " \u2013 " + segmentVehicle + "<\/div>\r\n " +
+                "<\/div>\r\n " +
+                "<\/div>\r\n" +
+                "<div class=\"row\">\r\n " +
+                "<div class=\"col-lg-9\">\r\n " +
+                "<div class=\"card-title\">" + segmentArrivalTime + " - <a href=\".\/stops-nl.html#" + segmentArrivalStopId + "\">" + segmentArrivalStop + "<\/a> " + arrivalDelayNotification + " <\/div>\r\n " +
+                "<\/div>\r\n " +
+                "<\/div>\r\n";;
+
+            segments += segmentCardBody;
+            //     segments += "<p><span class='weak'>Take the train with destination </span><strong>" + segment.headsign + "</strong><span class='weak'>, get off in </span><strong>" + segment.arrival.location.name + "</strong> at " + dateHHMM(segment.arrival.time) + " </p>";
+
+        }
+        // segments = "<div class='hidden'><div class='journey-content'>" + segments + "</div></div>"
+
+        // let journeyText = "<div class='row journey'>" + headerText + segments + "</div>";
+
+
+        var showClass = "";
+        if (first) {
+            showClass = "show";
+        }
+        var delayNotification = "";
+        if (hasDelay) {
+            delayNotification = "<i class=\"fa fa-exclamation-triangle\"><\/i>";
+        }
+        var journeyCard =
+            "<div class=\"card\">\r\n" +
+            "<div class=\"card-header\" id=\"" + headingId + "\">\r\n" +
+            "<button class=\"btn\" type=\"button\" data-toggle=\"collapse\" data-target=\"#" + dataTarget + "\"\r\naria-expanded=\"true\" aria-controls=\"collapseOne\">\r\n" +
+            "<div class=\"card-title\">" + depTime + ">" + arrTime + "<span class=\"text-muted\">  " + totalTime + " min<\/span> " + delayNotification + " \r\n" +
+            "<\/div>\r\n    \r\n          " +
+            "<\/button>\r\n                                    " +
+            "<\/div>\r\n" +
+            "<div id=\"" + dataTarget + "\" class=\"collapse " + showClass + "\" aria-labelledby=\"" + headingId + "\"\r\n data-parent=\"#" + headingId + "\">\r\n" +
+            "<div class=\"card-body\">\r\n " +
+            segments +
+            "<\/div>\r\n" +
+            "<\/div>\r\n" +
+            "<\/div>";
+
+        let el = htmlToElement(journeyCard);
+        //el.journeyLayer = createJourneyLayer(journey);
+        // el.addEventListener('click', function () {
+        //     var contents = el.childNodes[1];
+        //     if (contents.className == "hidden") {
+        //         contents.className = "";
+        //     } else {
+        //         contents.className += "hidden";
+        //     }
+        // });
+        journeys.appendChild(el);
+        return el;
+    }
+
+    function renderJourneys(journeys) {
+        var journeyEl = document.getElementById("journeys");
+        while (journeyEl.firstChild) {
+            journeyEl.removeChild(journeyEl.firstChild);
+        }
+
+        let leave = document.getElementById("leaveOrArrive");
+        if (leave) {
+            if (leave.value === "leave") {
+            } else {
+                journeys.reverse();
+            }
+        }
+
+        let firstEl = undefined;
+        for (var i in journeys) {
+            let el = renderJourney(journeys[i], firstEl === undefined);
+            if (firstEl === undefined) {
+                firstEl = el;
+            }
+        }
+    }
+
+    function onFail() {
+        var journeyEl = document.getElementById("journeys");
+        while (journeyEl.firstChild) {
+            journeyEl.removeChild(journeyEl.firstChild);
+        }
+        alert("Looking up the journey failed. Perhaps you tried searching a lot in the past of the future?")
+    }
+
+    $("#leaveOrArrive").change(function () {
+        let fromField = document.getElementById("from");
+        let fromId = fromField.hiddenValue;
+
+        let toField = document.getElementById("to");
+        let toId = toField.hiddenValue;
+
+        if (toId && fromId) {
+            loadJourneys();
+        }
+    });
+</script>
