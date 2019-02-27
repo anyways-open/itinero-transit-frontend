@@ -16,7 +16,7 @@
 </head>
 
 <body>
-    <nav class="header-bar navbar navbar-expand-lg navbar-dark">
+    <nav class="header-bar navbar navbar-expand-lg navbar-light">
         <a class="navbar-brand" href="#"><img src="img/logo.png" class="logo" /></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -26,13 +26,13 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="index.html">Plan a route</a>
+                    <a class="nav-link translate-this" href="index.html">Plan a route</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="stops.html">Search a stop</a>
+                    <a class="nav-link translate-this" href="stops.html">Search a stop</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="about.html">About</a>
+                    <a class="nav-link translate-this" href="about.html">About</a>
                 </li>
             </ul>
         </div>
@@ -42,14 +42,15 @@
             <div class="col-lg-11  py-3 px-lg-5">
                 <div class="row">
                     <div class="form-group col-sm-6">
-                        <label class="sr-only" for="from">From</label>
+                        <label class="sr-only translate-this" for="from">From</label>
                         <div class="input-group mb-2 mr-sm-2">
                             <div class="input-group-prepend">
-                                <div class="input-group-text">From</div>
+                                <div class="input-group-text translate-this">From</div>
                             </div>
                             <input type="text" class="form-control" id="from" placeholder="...">
                             <div class="input-group-append">
-                                <button type="submit" onclick="reverseJourneys()" class="btn btn-primary btn-block"><i class="fa fa-exchange"></i></button>
+                                <button type="submit" onclick="reverseJourneys()" class="btn btn-primary btn-block"><i
+                                        class="fa fa-exchange"></i></button>
                             </div>
                         </div>
                     </div>
@@ -57,7 +58,7 @@
                         <label class="sr-only" for="to">To</label>
                         <div class="input-group mb-2 mr-sm-2">
                             <div class="input-group-prepend">
-                                <div class="input-group-text">To</div>
+                                <div class="input-group-text translate-this">To</div>
                             </div>
                             <input type="text" class="form-control" id="to" placeholder="...">
                         </div>
@@ -69,8 +70,8 @@
                         <label class="mr-sm-2 sr-only" for="leaveOrArrive"></label>
                         <div class="input-group mb-2 mr-sm-2">
                             <select class="custom-select mr-sm-2" id="leaveOrArrive">
-                                <option selected">Leave</option>
-                                <option value="1">Arrive</option>
+                                <option class="translate-this" value="leave" selected>Leave</option>
+                                <option class="translate-this" value="arrive">Arrive</option>
                             </select>
                             <div class="input-group-append">
                                 <div class="input-group-text">@</div>
@@ -88,11 +89,10 @@
                         </div>
                     </div>
                     <div class="form-group col-sm-3">
-                        <button type="submit" onclick="loadJourneys()" class="btn btn-primary btn-block">Plan
-                            Route</button>
+                        <button type="submit" onclick="loadJourneys()"
+                            class="btn btn-primary btn-block translate-this">Plan Route</button>
                     </div>
                 </div>
-
 
                 <div class="row">
                     <!-- <div class="col-sm-9">
@@ -157,6 +157,7 @@
         });
     </script>
     <script src="AutoComplete.js"></script>
+    <script src="js/translations.js"></script>
     <script>
         var host = "https://api.anyways.eu/transit";
 
@@ -182,20 +183,20 @@
 
         autocomplete(document.getElementById("from"), suggestStations);
         autocomplete(document.getElementById("to"), suggestStations);
-                
-        function reverseJourneys(){
+
+        function reverseJourneys() {
             let fromField = document.getElementById("from");
             let fromId = fromField.hiddenValue;
-            
+
             let toField = document.getElementById("to");
             let toId = toField.hiddenValue;
-            
+
             var tempValue = fromField.value;
             var tempHV = fromField.hiddenValue;
-            
+
             fromField.value = toField.value;
             fromField.hiddenValue = toField.hiddenValue;
-            
+
             toField.value = tempValue;
             toField.hiddenValue = tempHV;
 
@@ -237,7 +238,7 @@
 
             let leave = document.getElementById("leaveOrArrive");
             if (leave) {
-                if (leave.value === "Leave") {
+                if (leave.value === "leave") {
                     leave = true;
                 } else {
                     leave = false;
@@ -260,7 +261,7 @@
             while (journeyEl.firstChild) {
                 journeyEl.removeChild(journeyEl.firstChild);
             }
-            
+
             let query = host + "/journey?from=" + encodeURIComponent(fromId) +
                 "&to=" + encodeURIComponent(toId) +
                 "&arrival=" + encodeURIComponent(departureTimeUTC) +
@@ -307,32 +308,50 @@
             //let headerText = "<div class=journey-header><strong>" + depTime + " > " + arrTime + "</strong>  <span class='weak'>(" + totalTime + " total time)</span> <br /> <span class='weak'>Train to</span> <strong>" + trainTo + "</strong> " + transfers + "</div>"
 
             var segments = "";
+            var hasDelay = false;
             for (var i in journey.segments) {
                 var segment = journey.segments[i];
 
                 var segmentDepartureTime = dateHHMM(segment.departure.time);
+                var segmentDepartureDelay = segment.departure.delay;
                 var segmentDepartureStop = segment.departure.location.name;
                 var segmentDepartureStopId = segment.departure.location.id;
                 var segmentArrivalTime = dateHHMM(segment.arrival.time);
+                var segmentArrivalDelay = segment.arrival.delay;
                 var segmentArrivalStop = segment.arrival.location.name;
                 var segmentArrivalStopId = segment.arrival.location.id;
                 var segmentVehicle = segment.vehicle.substring(segment.vehicle.lastIndexOf("/") + 1);
-                var segmentCardBody = 
+
+                var departureDelayNotification = "";
+                if (segmentDepartureDelay > 0) {
+                    segmentDepartureDelay = segmentDepartureDelay / 60;
+                    hasDelay = true;
+                    departureDelayNotification = "<span class=\"delay\">" + "+" + segmentDepartureDelay +"<\/span>" ;
+                }
+
+                var arrivalDelayNotification = "";
+                if (segmentArrivalDelay > 0) {
+                    segmentArrivalDelay = segmentArrivalDelay / 60;
+                    hasDelay = true;
+                    arrivalDelayNotification = "<span class=\"delay\">" + "+" + segmentArrivalDelay +"<\/span>" ;
+                }
+
+                var segmentCardBody =
                     "<div class=\"row\">\r\n " +
-                        "<div class=\"col-lg-9\">\r\n " +
-                            "<div class=\"card-title\">" + segmentDepartureTime +  " - <a href=\".\/stops.html#" + segmentDepartureStopId +"\">" + segmentDepartureStop + "<\/a><\/div>\r\n " +
-                            "<div class=\"card-subtitle mb-2 text-muted\"><i class=\"fa fa-train\"><\/i>\r\n  " +
-                            "" + segment.headsign + " \u2013 " + segmentVehicle + "<\/div>\r\n " +
-                        "<\/div>\r\n " +
-                    "<\/div>\r\n" + 
+                    "<div class=\"col-lg-9\">\r\n " +
+                    "<div class=\"card-title\">" + segmentDepartureTime + " - <a href=\".\/stops.html#" + segmentDepartureStopId + "\">" + segmentDepartureStop + "<\/a> " + departureDelayNotification +  " <\/div>\r\n " +
+                    "<div class=\"card-subtitle mb-2 text-muted\"><i class=\"fa fa-train\"><\/i>\r\n  " +
+                    "" + segment.headsign + " \u2013 " + segmentVehicle + "<\/div>\r\n " +
+                    "<\/div>\r\n " +
+                    "<\/div>\r\n" +
                     "<div class=\"row\">\r\n " +
-                        "<div class=\"col-lg-9\">\r\n " +
-                            "<div class=\"card-title\">" + segmentArrivalTime +  " - <a href=\".\/stops.html#" + segmentArrivalStopId +"\">" + segmentArrivalStop + "<\/a><\/div>\r\n " +
-                        "<\/div>\r\n " +
+                    "<div class=\"col-lg-9\">\r\n " +
+                    "<div class=\"card-title\">" + segmentArrivalTime + " - <a href=\".\/stops.html#" + segmentArrivalStopId + "\">" + segmentArrivalStop + "<\/a> " + arrivalDelayNotification +  " <\/div>\r\n " +
+                    "<\/div>\r\n " +
                     "<\/div>\r\n";;
 
                 segments += segmentCardBody;
-            //     segments += "<p><span class='weak'>Take the train with destination </span><strong>" + segment.headsign + "</strong><span class='weak'>, get off in </span><strong>" + segment.arrival.location.name + "</strong> at " + dateHHMM(segment.arrival.time) + " </p>";
+                //     segments += "<p><span class='weak'>Take the train with destination </span><strong>" + segment.headsign + "</strong><span class='weak'>, get off in </span><strong>" + segment.arrival.location.name + "</strong> at " + dateHHMM(segment.arrival.time) + " </p>";
 
             }
             // segments = "<div class='hidden'><div class='journey-content'>" + segments + "</div></div>"
@@ -344,17 +363,21 @@
             if (first) {
                 showClass = "show";
             }
+            var delayNotification = "";
+            if (hasDelay) {
+                delayNotification = "<i class=\"fa fa-exclamation-triangle\"><\/i>";
+            }
             var journeyCard =
                 "<div class=\"card\">\r\n" +
-                "<div class=\"card-header\" id=\"" + headingId +  "\">\r\n" +
-                "<button class=\"btn\" type=\"button\" data-toggle=\"collapse\" data-target=\"#" + dataTarget +  "\"\r\naria-expanded=\"true\" aria-controls=\"collapseOne\">\r\n" +
-                "<div class=\"card-title\">" + depTime + ">" + arrTime + "<span class=\"text-muted\">  " + totalMinutes + " min<\/span>\r\n" +
+                "<div class=\"card-header\" id=\"" + headingId + "\">\r\n" +
+                "<button class=\"btn\" type=\"button\" data-toggle=\"collapse\" data-target=\"#" + dataTarget + "\"\r\naria-expanded=\"true\" aria-controls=\"collapseOne\">\r\n" +
+                "<div class=\"card-title\">" + depTime + ">" + arrTime + "<span class=\"text-muted\">  " + totalTime + " min<\/span> " + delayNotification + " \r\n" +
                 "<\/div>\r\n    \r\n          " +
                 "<\/button>\r\n                                    " +
                 "<\/div>\r\n" +
-                "<div id=\"" + dataTarget +  "\" class=\"collapse " + showClass +  "\" aria-labelledby=\"" + headingId +  "\"\r\n data-parent=\"#" + headingId +  "\">\r\n" +
+                "<div id=\"" + dataTarget + "\" class=\"collapse " + showClass + "\" aria-labelledby=\"" + headingId + "\"\r\n data-parent=\"#" + headingId + "\">\r\n" +
                 "<div class=\"card-body\">\r\n " +
-                    segments +
+                segments +
                 "<\/div>\r\n" +
                 "<\/div>\r\n" +
                 "<\/div>";
@@ -381,7 +404,7 @@
 
             let leave = document.getElementById("leaveOrArrive");
             if (leave) {
-                if (leave.value === "Leave") {
+                if (leave.value === "leave") {
                 } else {
                     journeys.reverse();
                 }
@@ -404,7 +427,7 @@
             alert("Looking up the journey failed. Perhaps you tried searching a lot in the past of the future?")
         }
 
-        $( "#leaveOrArrive" ).change(function() {
+        $("#leaveOrArrive").change(function () {
             let fromField = document.getElementById("from");
             let fromId = fromField.hiddenValue;
 
@@ -419,9 +442,13 @@
 
     <footer class="footer container">
         <hr>
-        <p class="small text-muted text-center">Built by <a href="https://www.anyways.eu" target="_blank">ANYWAYS</a>  <a href="https://github.com/anyways-open/"><i class="fa fa-github"></i></a> and <a href="https://www.openplanner.team" target="_blank">openplanner.team</a>  <a href="https://github.com/openplannerteam/"><i class="fa fa-github"></i></a></p>
+        <p class="small text-muted text-center">Built by <a href="https://www.anyways.eu" target="_blank">ANYWAYS</a> <a
+                href="https://github.com/anyways-open/"><i class="fa fa-github"></i></a> and <a
+                href="https://www.openplanner.team" target="_blank">openplanner.team</a> <a
+                href="https://github.com/openplannerteam/"><i class="fa fa-github"></i></a></p>
 
     </footer>
 
 </body>
+
 </html>

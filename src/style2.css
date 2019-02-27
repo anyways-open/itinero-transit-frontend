@@ -11,6 +11,10 @@
     width: 40px;
 }
 
+.delay {
+  color: red;
+}
+
 /************ AUTOCOMPLETE STUFF ***********/
 .autocomplete {
     /*the container must be positioned relative:*/
