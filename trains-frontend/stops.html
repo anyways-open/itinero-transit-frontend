@@ -1,0 +1,244 @@
+---
+title: ANYWAYS | Trains routeplanner
+layout: default
+lang: en
+order: 1
+---
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css">
+
+<nav class="header-bar navbar navbar-expand-lg navbar-dark">
+    <a class="navbar-brand" href="#"><img src="assets/images/logo.png" class="logo" /></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="index.html">Plan a route</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="stops.html">Search a stop</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="about.html">About</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div class="container-fluid">
+    <div class="row justify-content-md-center">
+        <div class="col-lg-11  py-3 px-lg-5">
+            <div class="row">
+                <div class="form-group col-sm-6">
+                    <label class="sr-only" for="from">Stop name</label>
+                    <div class="input-group mb-2 mr-sm-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">Stop name</div>
+                        </div>
+                        <input type="text" class="form-control" id="from" placeholder="...">
+                    </div>
+                </div>
+            </div>
+
+
+            <h4>Trains departing next from this stop:</h4>
+            <br />
+            <div class="row">
+                <!-- <div class="col-sm-9">
+                        <div class="accordion">
+                            <div class="card">
+                                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                                    data-parent="#accordionExample">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-lg-9">
+                                                <div class="card-title">08:28 - Brussel-Central</div>
+                                                <div class="card-subtitle mb-2 text-muted"><i class="fa fa-train"></i>
+                                                    Brux.-Midi/Brus.-Zuid – IC3330</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                                    data-parent="#accordionExample">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-lg-9">
+                                                <div class="card-title">08:28 - Brussel-Central</div>
+                                                <div class="card-subtitle mb-2 text-muted"><i class="fa fa-train"></i>
+                                                    Brux.-Midi/Brus.-Zuid – IC3330</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                                    data-parent="#accordionExample">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-lg-9">
+                                                <div class="card-title">08:28 - Brussel-Central</div>
+                                                <div class="card-subtitle mb-2 text-muted"><i class="fa fa-train"></i>
+                                                    Brux.-Midi/Brus.-Zuid – IC3330</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+                <div class="col-sm-12">
+                    <div class="accordion" id="connections">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+<script src="assets/js/moment-with-locales.js"></script>
+<script type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/js/tempusdominus-bootstrap-4.min.js"></script>
+<link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
+<script type="text/javascript">
+    $(function () {
+        $('#datetimepicker1').datetimepicker({
+            defaultDate: Date.now()
+        });
+    });
+</script>
+<script src="assets/js/autocomplete.js"></script>
+<script>
+    var host = "https://api.anyways.eu/transit";
+
+    function searchStation(query, callback) {
+        if (query.length < 1) {
+            return;
+        }
+
+        $.getJSON(host + "/LocationsByName?name=" + query, callback);
+    }
+
+    function suggestStations(val, callback) {
+        searchStation(val, function (data) {
+            var arr = [];
+            var tags = [];
+            for (let i in data) {
+                arr.push(data[i].location.name);
+                tags.push(data[i].location);
+            }
+            callback(arr, tags);
+        });
+    }
+
+    autocomplete(document.getElementById("from"), suggestStations, function () {
+        let fromField = document.getElementById("from");
+        let fromId = fromField.hiddenValue;
+
+        loadConnections(fromId.id);
+    });
+
+    function loadConnections(fromId) {
+        console.log(fromId);
+
+        let query = host + "/location/connections?id=" + encodeURIComponent(fromId);
+        $.getJSON(query, function (locationAndConnections) {
+            renderConnections(locationAndConnections);
+        }).fail(onFail);
+    }
+
+    function htmlToElement(html) {
+        let template = document.createElement('template');
+        html = html.trim(); // Never return a text node of whitespace as the result
+        template.innerHTML = html;
+        return template.content.firstChild;
+    }
+
+    function dateHHMM(date) {
+        return new Date(date).toTimeString().split(' ')[0].substring(0, 5);
+    }
+
+    function renderConnections(locationAndConnections) {
+        document.getElementById("from").value = locationAndConnections.location.name;
+        var journeyEl = document.getElementById("connections");
+        while (journeyEl.firstChild) {
+            journeyEl.removeChild(journeyEl.firstChild);
+        }
+
+        var segmentCards = "";
+        for (var c in locationAndConnections.segments) {
+            var segment = locationAndConnections.segments[c];
+            let depTime = dateHHMM(segment.departure.time);
+            let headsign = segment.headsign;
+            var segmentVehicle = segment.vehicle.substring(segment.vehicle.lastIndexOf("/") + 1);
+            var connectionCard = "<div class=\"card\">\r\n" +
+                "<div id=\"collapseOne\" class=\"collapse show\" aria-labelledby=\"headingOne\"\r\n" + "data-parent=\"#accordionExample\">\r\n" +
+                "<div class=\"card-body\">\r\n" +
+                "<div class=\"row\">\r\n" +
+                "<div class=\"col-lg-9\">\r\n" +
+                "<div class=\"card-title\">" + depTime + "<\/div>\r\n" +
+                "<div class=\"card-subtitle mb-2 text-muted\"><i class=\"fa fa-train\"><\/i>\r\n" +
+                "" + headsign + " \u2013 " + segmentVehicle + "<\/div>\r\n" +
+                "<\/div>\r\n" +
+                "<\/div>\r\n" +
+                "<\/div>\r\n" +
+                "<\/div>\r\n" +
+                "<\/div>";
+
+            let el = htmlToElement(connectionCard);
+            //el.journeyLayer = createJourneyLayer(journey);
+            // el.addEventListener('click', function () {
+            //     var contents = el.childNodes[1];
+            //     if (contents.className == "hidden") {
+            //         contents.className = "";
+            //     } else {
+            //         contents.className += "hidden";
+            //     }
+            // });
+            journeyEl.appendChild(el);
+        }
+    }
+
+    function onFail() {
+        var journeyEl = document.getElementById("journeys");
+        while (journeyEl.firstChild) {
+            journeyEl.removeChild(journeyEl.firstChild);
+        }
+        alert("Looking up the journey failed. Perhaps you tried searching a lot in the past of the future?")
+    }
+    if (window.location.hash) {
+        var hash = window.location.hash.substring(1); //Puts hash in variable, and removes the # character
+        loadConnections(hash);
+        // hash found
+    } else {
+        // No hash found
+    }
+</script>
+
+<footer class="footer container">
+    <hr>
+    <p class="small text-muted text-center">Built by <a href="https://www.anyways.eu" target="_blank">ANYWAYS</a> <a
+            href="https://github.com/anyways-open/"><i class="fa fa-github"></i></a> and <a
+            href="https://www.openplanner.team" target="_blank">openplanner.team</a> <a
+            href="https://github.com/openplannerteam/"><i class="fa fa-github"></i></a></p>
+
+</footer>
