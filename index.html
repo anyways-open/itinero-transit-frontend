@@ -301,7 +301,7 @@ order: 1
         }
         let totalTime = (Math.floor(totalMinutes / 60)) + ":" + minutes;
         let trainTo = journey.segments[0].headsign;
-        let transfers = journey.transfers == 0 ? "" : (", " + journey.transfers + " transfers");
+        let transfers = journey.transfers == 0 ? "" : (", " + (journey.vehiclesTaken-1) + " transfers");
 
         // generate a random heading id.
         let r = Math.random().toString(36).substring(7);
