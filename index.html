@@ -132,7 +132,7 @@ order: 1
     var c = url.searchParams.get("debug");
     if(c === "true"){
         host = "http://localhost:5000"
-        console.log("Using localhost as querying server")
+        console.log("Using localhost:5000 as querying server")
     }
 
 
@@ -269,7 +269,8 @@ order: 1
         let query = host + "/journey?from=" + encodeURIComponent(fromId) +
             "&to=" + encodeURIComponent(toId) +
             "&arrival=" + encodeURIComponent(departureTimeUTC) +
-            "&internalTransferTime=" + transferTime;
+            "&internalTransferTime=" + transferTime +
+            "&multipleOptions=true";
         if (leave) {
             query = host + "/journey?from=" + encodeURIComponent(fromId) +
                 "&to=" + encodeURIComponent(toId) +
