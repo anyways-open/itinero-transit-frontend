@@ -411,6 +411,8 @@ order: 1
         
         if(response.journeys){
             journeys = response.journeys;
+        }else{
+            alert("No journeys found for this arrival and destination during this timeframe. (200 OK)");
         }
 
         let leave = document.getElementById("leaveOrArrive");
