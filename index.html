@@ -275,7 +275,8 @@ order: 1
             query = host + "/journey?from=" + encodeURIComponent(fromId) +
                 "&to=" + encodeURIComponent(toId) +
                 "&departure=" + encodeURIComponent(departureTimeUTC) +
-                "&internalTransferTime=" + transferTime;
+                "&internalTransferTime=" + transferTime +
+                "&multipleOptions=true";
         }
         $.getJSON(query, callback)
             .fail(failCallback);
