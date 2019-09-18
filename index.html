@@ -134,11 +134,12 @@ order: 1
         host = "http://localhost:5000"
         console.log("Using localhost:5000 as querying server")
     }
-
-
-
-
-
+    
+    var c = url.searchParams.get("staging");
+    if(c === "true"){
+        host = "http://staging.anyways.eu/transitapi/"
+        console.log("Using staging.anyways.eu as querying server")
+    }
 
     // Set the date format to include timezone offset
     // https://stackoverflow.com/questions/17415579/how-to-iso-8601-format-a-date-with-timezone-offset-in-javascript
